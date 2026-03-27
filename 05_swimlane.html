@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>パターン5: スイムレーン</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { font-family: 'Helvetica Neue', 'Hiragino Sans', sans-serif; background: #fafbfc; color: #24292f; padding: 40px 20px; }
+  .container { max-width: 900px; margin: 0 auto; }
+  h1 { font-size: 20px; text-align: center; margin-bottom: 4px; }
+  .subtitle { text-align: center; font-size: 12px; color: #8b949e; margin-bottom: 32px; }
+  .swimlane-table { width: 100%; border-collapse: collapse; }
+  .swimlane-table th { text-align: left; padding: 12px 16px; font-size: 12px; font-weight: 700; border-bottom: 2px solid; vertical-align: top; width: 120px; writing-mode: horizontal-tb; }
+  .swimlane-table td { padding: 10px 12px; border-bottom: 1px solid #e1e4e8; vertical-align: middle; }
+  .lane-sf th { color: #0969da; border-color: #0969da; background: #f0f7ff; }
+  .lane-sn th { color: #1a7f37; border-color: #1a7f37; background: #f0fff4; }
+  .lane-ai th { color: #bf8700; border-color: #bf8700; background: #fffbe6; }
+  .lane-web th { color: #8250df; border-color: #8250df; background: #faf5ff; }
+  .node-inline { display: inline-flex; align-items: center; gap: 8px; background: #fff; border: 1px solid #d0d7de; border-radius: 8px; padding: 8px 12px; margin: 4px; font-size: 12px; box-shadow: 0 1px 2px rgba(0,0,0,0.04); }
+  .node-inline .num { display: inline-flex; align-items: center; justify-content: center; width: 20px; height: 20px; border-radius: 50%; font-size: 10px; font-weight: 800; color: #fff; flex-shrink: 0; }
+  .num-sf { background: #0969da; }
+  .num-sn { background: #1a7f37; }
+  .num-ai { background: #bf8700; }
+  .num-web { background: #8250df; }
+  .arrow-r { color: #8b949e; margin: 0 2px; font-size: 14px; }
+  .flow-row { display: flex; align-items: center; flex-wrap: wrap; gap: 4px; }
+  .branch-indicator { font-size: 10px; color: #8b949e; background: #f6f8fa; padding: 2px 6px; border-radius: 4px; margin: 4px; }
+  .footer-note { margin-top: 24px; padding: 16px; background: #f6f8fa; border-radius: 8px; border: 1px solid #d0d7de; }
+  .footer-note h3 { font-size: 13px; margin-bottom: 8px; }
+  .footer-note p { font-size: 11px; color: #57606a; line-height: 1.6; }
+</style>
+</head>
+<body>
+<div class="container">
+  <h1>dodaキャンパス 掘り起こしスクリプト自動生成</h1>
+  <p class="subtitle">サービス別スイムレーン図</p>
+
+  <table class="swimlane-table">
+    <tr class="lane-sf">
+      <th>Salesforce</th>
+      <td>
+        <div class="flow-row">
+          <div class="node-inline"><span class="num num-sf">1</span>対象取引先を抽出</div>
+          <span class="arrow-r">&#10145;</span>
+          <div class="node-inline"><span class="num num-sf">2</span>活動履歴（直近3件）を取得</div>
+        </div>
+      </td>
+    </tr>
+    <tr class="lane-sn">
+      <th>SalesNow<br>API</th>
+      <td>
+        <div class="flow-row">
+          <div class="node-inline"><span class="num num-sn">3</span>企業情報を取得</div>
+          <span class="arrow-r">&#10145;</span>
+          <div class="node-inline"><span class="num num-sn">4</span>マイナビ27 検索</div>
+          <span class="arrow-r">&#10145;</span>
+          <div class="node-inline"><span class="num num-sn">5</span>マイナビ26 検索</div>
+          <span class="arrow-r">&#10145;</span>
+          <div class="node-inline"><span class="num num-sn">6</span>マイナビ25 検索</div>
+        </div>
+      </td>
+    </tr>
+    <tr class="lane-web">
+      <th>Web<br>スクレイピング</th>
+      <td>
+        <div class="flow-row">
+          <span class="branch-indicator">マイナビ27 URLあり &#10145;</span>
+          <div class="node-inline"><span class="num num-web">7</span>マイナビ27 ページHTML取得</div>
+        </div>
+      </td>
+    </tr>
+    <tr class="lane-ai">
+      <th>Claude AI</th>
+      <td>
+        <div class="flow-row">
+          <div class="node-inline"><span class="num num-ai">8</span>HTMLから採用情報を抽出</div>
+          <span class="arrow-r">&#10145;</span>
+          <div class="node-inline"><span class="num num-ai">9</span>トークスクリプト生成</div>
+        </div>
+        <div style="font-size:10px;color:#8b949e;margin-top:6px;margin-left:4px;">入力: 活動履歴 + 企業情報 + 採用状況 + dodaキャンパス概要</div>
+      </td>
+    </tr>
+    <tr class="lane-sf">
+      <th>Salesforce</th>
+      <td>
+        <div class="flow-row">
+          <div class="node-inline"><span class="num num-sf">10</span>主担当の取引先責任者を特定</div>
+          <span class="arrow-r">&#10145;</span>
+          <div class="node-inline"><span class="num num-sf">11</span>ToDoを作成・登録</div>
+        </div>
+      </td>
+    </tr>
+  </table>
+
+  <div class="footer-note">
+    <h3>アウトプット</h3>
+    <p>件名「dodaキャンパス訴求 - ○○株式会社」のToDoがSalesforceに自動作成され、主担当者に紐付きます。<br>コメント欄にトークスクリプト全文が記載されるため、翌朝ToDoを開くだけで架電準備が完了します。</p>
+  </div>
+</div>
+</body>
+</html>

@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>パターン8: パイプラインブロック</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { font-family: 'Helvetica Neue', 'Hiragino Sans', sans-serif; background: #fff; color: #1e293b; padding: 48px 20px; }
+  .container { max-width: 760px; margin: 0 auto; }
+  h1 { font-size: 20px; text-align: center; margin-bottom: 4px; }
+  .subtitle { text-align: center; font-size: 12px; color: #94a3b8; margin-bottom: 36px; }
+  .pipeline { display: flex; flex-direction: column; gap: 0; }
+  .block { display: flex; gap: 0; }
+  .block-label { width: 160px; padding: 16px; display: flex; flex-direction: column; justify-content: center; color: #fff; font-size: 13px; font-weight: 700; flex-shrink: 0; }
+  .block-label small { font-size: 10px; font-weight: 400; opacity: 0.8; margin-top: 2px; }
+  .block-content { flex: 1; padding: 16px 20px; background: #f8fafc; border-bottom: 1px solid #e2e8f0; }
+  .block-content p { font-size: 12px; line-height: 1.7; color: #475569; }
+  .block-content strong { color: #1e293b; }
+  .b1 .block-label { background: #3b82f6; border-radius: 12px 0 0 0; }
+  .b2 .block-label { background: #0ea5e9; }
+  .b3 .block-label { background: #10b981; }
+  .b4 .block-label { background: #8b5cf6; }
+  .b5 .block-label { background: #f59e0b; }
+  .b6 .block-label { background: #ef4444; border-radius: 0 0 0 12px; }
+  .b1 .block-content { border-radius: 0 12px 0 0; }
+  .b6 .block-content { border-radius: 0 0 12px 0; border-bottom: none; }
+  .detail-list { list-style: none; margin-top: 6px; }
+  .detail-list li { font-size: 11px; color: #64748b; padding: 2px 0; padding-left: 12px; position: relative; }
+  .detail-list li::before { content: ''; position: absolute; left: 0; top: 8px; width: 5px; height: 5px; border-radius: 50%; }
+  .b3 .detail-list li::before { background: #10b981; }
+  .b4 .detail-list li::before { background: #8b5cf6; }
+  .b5 .detail-list li::before { background: #f59e0b; }
+</style>
+</head>
+<body>
+<div class="container">
+  <h1>dodaキャンパス 掘り起こしスクリプト自動生成</h1>
+  <p class="subtitle">Processing Pipeline</p>
+
+  <div class="pipeline">
+    <div class="block b1">
+      <div class="block-label">&#9200; トリガー<br><small>毎日 17:00</small></div>
+      <div class="block-content">
+        <p>スケジュールトリガーで毎日17時に自動起動。翌日分の対象を処理します。</p>
+      </div>
+    </div>
+    <div class="block b2">
+      <div class="block-label">&#128269; 対象抽出<br><small>Salesforce</small></div>
+      <div class="block-content">
+        <p>Salesforceから<strong>「次回アクション日 = 翌日」</strong>の取引先をSOQLで検索・抽出します。</p>
+      </div>
+    </div>
+    <div class="block b3">
+      <div class="block-label">&#128230; 情報収集<br><small>SF + SalesNow</small></div>
+      <div class="block-content">
+        <p>取引先ごとに以下の情報を自動収集します：</p>
+        <ul class="detail-list">
+          <li>Salesforceから直近3件の活動履歴（電話内容・会話メモ）</li>
+          <li>SalesNow APIで企業概要（業界・従業員数・AI要約）</li>
+          <li>SalesNow APIでマイナビ27/26/25の掲載有無を検索</li>
+          <li>マイナビ27の掲載URLを取得</li>
+        </ul>
+      </div>
+    </div>
+    <div class="block b4">
+      <div class="block-label">&#128196; AI解析<br><small>Claude AI</small></div>
+      <div class="block-content">
+        <p>マイナビ27のURLがある場合、ページHTMLをClaude AIが解析：</p>
+        <ul class="detail-list">
+          <li>説明会・セミナーの日程</li>
+          <li>採用予定人数</li>
+          <li>過去3年間の新卒採用者数（男女別）</li>
+          <li>募集職種・募集学科</li>
+        </ul>
+      </div>
+    </div>
+    <div class="block b5">
+      <div class="block-label">&#9997; スクリプト<br><small>Claude AI</small></div>
+      <div class="block-content">
+        <p>全情報を統合し、Claude AIが<strong>dodaキャンパスを訴求する掘り起こしトークスクリプト</strong>を自動生成します。</p>
+        <ul class="detail-list">
+          <li>導入（前回の接点の振り返り）</li>
+          <li>状況確認・採用課題の深掘り</li>
+          <li>dodaキャンパスの提案</li>
+          <li>ネクストアクション</li>
+        </ul>
+      </div>
+    </div>
+    <div class="block b6">
+      <div class="block-label">&#9989; 登録<br><small>Salesforce</small></div>
+      <div class="block-content">
+        <p>主担当の取引先責任者を特定し、<strong>「dodaキャンパス訴求 - ○○株式会社」</strong>の件名でSalesforce ToDoを作成。コメント欄にスクリプト全文を記載して担当者に紐付けます。</p>
+      </div>
+    </div>
+  </div>
+</div>
+</body>
+</html>

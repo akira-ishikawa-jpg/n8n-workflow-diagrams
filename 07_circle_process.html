@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>パターン7: サークルプロセス</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { font-family: 'Helvetica Neue', 'Hiragino Sans', sans-serif; background: #18181b; color: #fafafa; padding: 40px 20px; }
+  .container { max-width: 800px; margin: 0 auto; text-align: center; }
+  h1 { font-size: 20px; margin-bottom: 4px; }
+  .subtitle { font-size: 12px; color: #71717a; margin-bottom: 40px; }
+  .circle-flow { display: flex; flex-wrap: wrap; justify-content: center; gap: 24px; }
+  .circle-item { width: 200px; display: flex; flex-direction: column; align-items: center; }
+  .circle { width: 100px; height: 100px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 32px; position: relative; margin-bottom: 12px; }
+  .circle::after { content: attr(data-num); position: absolute; top: -4px; right: -4px; width: 24px; height: 24px; border-radius: 50%; background: #fafafa; color: #18181b; font-size: 11px; font-weight: 800; display: flex; align-items: center; justify-content: center; }
+  .c-blue { background: linear-gradient(135deg, #3b82f6, #1d4ed8); }
+  .c-green { background: linear-gradient(135deg, #10b981, #047857); }
+  .c-purple { background: linear-gradient(135deg, #8b5cf6, #6d28d9); }
+  .c-amber { background: linear-gradient(135deg, #f59e0b, #d97706); }
+  .c-rose { background: linear-gradient(135deg, #f43f5e, #be123c); }
+  .c-cyan { background: linear-gradient(135deg, #06b6d4, #0891b2); }
+  .item-title { font-size: 13px; font-weight: 700; margin-bottom: 4px; }
+  .item-desc { font-size: 10px; color: #a1a1aa; line-height: 1.5; }
+  .arrow-between { display: flex; align-items: center; justify-content: center; color: #3f3f46; font-size: 20px; width: 24px; margin-top: 40px; }
+  .output-section { margin-top: 40px; background: linear-gradient(135deg, #f43f5e22, #be123c22); border: 1px solid #f43f5e44; border-radius: 16px; padding: 24px; display: inline-block; }
+  .output-section .icon { font-size: 28px; margin-bottom: 8px; }
+  .output-section .title { font-size: 15px; font-weight: 700; margin-bottom: 4px; }
+  .output-section .desc { font-size: 11px; color: #a1a1aa; }
+  .service-bar { display: flex; justify-content: center; gap: 16px; margin-top: 32px; flex-wrap: wrap; }
+  .service-tag { font-size: 10px; padding: 4px 12px; border-radius: 20px; border: 1px solid #3f3f46; color: #a1a1aa; }
+</style>
+</head>
+<body>
+<div class="container">
+  <h1>dodaキャンパス 掘り起こしスクリプト自動生成</h1>
+  <p class="subtitle">Automated Workflow Pipeline</p>
+
+  <div class="circle-flow">
+    <div class="circle-item">
+      <div class="circle c-blue" data-num="1">&#9200;</div>
+      <div class="item-title">自動起動</div>
+      <div class="item-desc">毎日17時に翌日分の<br>対象取引先を抽出</div>
+    </div>
+    <div class="arrow-between">&#10145;</div>
+    <div class="circle-item">
+      <div class="circle c-cyan" data-num="2">&#128222;</div>
+      <div class="item-title">活動履歴</div>
+      <div class="item-desc">直近3件の電話内容を<br>Salesforceから取得</div>
+    </div>
+    <div class="arrow-between">&#10145;</div>
+    <div class="circle-item">
+      <div class="circle c-green" data-num="3">&#127981;</div>
+      <div class="item-title">企業情報</div>
+      <div class="item-desc">SalesNow APIで<br>企業概要を取得</div>
+    </div>
+  </div>
+
+  <div style="margin: 16px 0; color: #3f3f46; font-size: 20px;">&#11015;</div>
+
+  <div class="circle-flow">
+    <div class="circle-item">
+      <div class="circle c-green" data-num="4">&#128270;</div>
+      <div class="item-title">マイナビ検索</div>
+      <div class="item-desc">27/26/25 掲載状況と<br>URLを取得</div>
+    </div>
+    <div class="arrow-between">&#10145;</div>
+    <div class="circle-item">
+      <div class="circle c-purple" data-num="5">&#128196;</div>
+      <div class="item-title">AI解析</div>
+      <div class="item-desc">マイナビページから<br>説明会日程・採用実績を抽出</div>
+    </div>
+    <div class="arrow-between">&#10145;</div>
+    <div class="circle-item">
+      <div class="circle c-amber" data-num="6">&#9997;</div>
+      <div class="item-title">スクリプト生成</div>
+      <div class="item-desc">Claude AIが全情報を統合<br>トークスクリプトを自動生成</div>
+    </div>
+  </div>
+
+  <div style="margin: 16px 0; color: #3f3f46; font-size: 20px;">&#11015;</div>
+
+  <div class="output-section">
+    <div class="icon">&#9989;</div>
+    <div class="title">SalesforceにToDo自動登録</div>
+    <div class="desc">「dodaキャンパス訴求 - ○○株式会社」で主担当者に紐付けてToDo作成</div>
+  </div>
+
+  <div class="service-bar">
+    <div class="service-tag">&#9729; Salesforce</div>
+    <div class="service-tag">&#127981; SalesNow API</div>
+    <div class="service-tag">&#127760; マイナビ Web</div>
+    <div class="service-tag">&#129302; Claude AI</div>
+  </div>
+</div>
+</body>
+</html>

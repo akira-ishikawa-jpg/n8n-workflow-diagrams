@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>パターン3: カードグリッド（フェーズ分割）</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { font-family: 'Helvetica Neue', 'Hiragino Sans', sans-serif; background: #fff; color: #1a1a2e; padding: 48px 24px; }
+  .container { max-width: 800px; margin: 0 auto; }
+  h1 { font-size: 22px; text-align: center; margin-bottom: 4px; }
+  .subtitle { text-align: center; font-size: 13px; color: #94a3b8; margin-bottom: 40px; }
+  .phase { margin-bottom: 32px; }
+  .phase-header { display: flex; align-items: center; gap: 10px; margin-bottom: 14px; }
+  .phase-num { width: 32px; height: 32px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 14px; font-weight: 800; color: #fff; }
+  .phase-title { font-size: 16px; font-weight: 700; }
+  .phase-line { flex: 1; height: 1px; background: #e2e8f0; }
+  .cards { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 12px; }
+  .card { border: 1px solid #e2e8f0; border-radius: 12px; padding: 16px; transition: box-shadow 0.2s; position: relative; overflow: hidden; }
+  .card::before { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 3px; }
+  .card:hover { box-shadow: 0 4px 12px rgba(0,0,0,0.08); }
+  .card-icon { font-size: 28px; margin-bottom: 8px; }
+  .card-title { font-size: 13px; font-weight: 700; margin-bottom: 4px; }
+  .card-desc { font-size: 11px; color: #64748b; line-height: 1.6; }
+  .card-service { display: inline-block; font-size: 9px; font-weight: 600; padding: 2px 6px; border-radius: 4px; margin-top: 8px; }
+  /* Phase colors */
+  .phase-1 .phase-num { background: #3b82f6; }
+  .phase-1 .card::before { background: #3b82f6; }
+  .phase-1 .card-service { background: #eff6ff; color: #3b82f6; }
+  .phase-2 .phase-num { background: #10b981; }
+  .phase-2 .card::before { background: #10b981; }
+  .phase-2 .card-service { background: #ecfdf5; color: #059669; }
+  .phase-3 .phase-num { background: #f59e0b; }
+  .phase-3 .card::before { background: #f59e0b; }
+  .phase-3 .card-service { background: #fffbeb; color: #d97706; }
+  .phase-4 .phase-num { background: #ef4444; }
+  .phase-4 .card::before { background: #ef4444; }
+  .phase-4 .card-service { background: #fef2f2; color: #dc2626; }
+  .connector { text-align: center; margin: 8px 0; color: #cbd5e1; font-size: 20px; }
+</style>
+</head>
+<body>
+<div class="container">
+  <h1>dodaキャンパス 掘り起こしスクリプト自動生成</h1>
+  <p class="subtitle">ワークフロー全体構成</p>
+
+  <div class="phase phase-1">
+    <div class="phase-header">
+      <div class="phase-num">1</div>
+      <div class="phase-title">トリガー＆対象抽出</div>
+      <div class="phase-line"></div>
+    </div>
+    <div class="cards">
+      <div class="card">
+        <div class="card-icon">&#9200;</div>
+        <div class="card-title">毎日17時 自動起動</div>
+        <div class="card-desc">スケジュールトリガーで翌日分の対象を処理開始</div>
+        <div class="card-service">n8n スケジューラ</div>
+      </div>
+      <div class="card">
+        <div class="card-icon">&#128269;</div>
+        <div class="card-title">対象取引先の抽出</div>
+        <div class="card-desc">Salesforceから「次回アクション日＝翌日」の取引先を検索</div>
+        <div class="card-service">Salesforce</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="connector">&#9660;</div>
+
+  <div class="phase phase-2">
+    <div class="phase-header">
+      <div class="phase-num">2</div>
+      <div class="phase-title">情報収集</div>
+      <div class="phase-line"></div>
+    </div>
+    <div class="cards">
+      <div class="card">
+        <div class="card-icon">&#128222;</div>
+        <div class="card-title">活動履歴の取得</div>
+        <div class="card-desc">直近3件の電話内容・会話メモをSalesforceから取得</div>
+        <div class="card-service">Salesforce</div>
+      </div>
+      <div class="card">
+        <div class="card-icon">&#127981;</div>
+        <div class="card-title">企業情報の取得</div>
+        <div class="card-desc">業界・従業員数・企業概要をSalesNow APIで取得</div>
+        <div class="card-service">SalesNow API</div>
+      </div>
+      <div class="card">
+        <div class="card-icon">&#128270;</div>
+        <div class="card-title">マイナビ掲載状況の確認</div>
+        <div class="card-desc">マイナビ27/26/25の掲載有無を検索。27はURLも取得</div>
+        <div class="card-service">SalesNow API</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="connector">&#9660;</div>
+
+  <div class="phase phase-3">
+    <div class="phase-header">
+      <div class="phase-num">3</div>
+      <div class="phase-title">AI解析＆スクリプト生成</div>
+      <div class="phase-line"></div>
+    </div>
+    <div class="cards">
+      <div class="card">
+        <div class="card-icon">&#128196;</div>
+        <div class="card-title">マイナビ情報のAI解析</div>
+        <div class="card-desc">マイナビ27ページから説明会日程・採用人数・過去3年の採用実績を抽出</div>
+        <div class="card-service">Claude AI</div>
+      </div>
+      <div class="card">
+        <div class="card-icon">&#9997;</div>
+        <div class="card-title">トークスクリプト生成</div>
+        <div class="card-desc">全情報を統合し、dodaキャンパス訴求の掘り起こしスクリプトを自動生成</div>
+        <div class="card-service">Claude AI</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="connector">&#9660;</div>
+
+  <div class="phase phase-4">
+    <div class="phase-header">
+      <div class="phase-num">4</div>
+      <div class="phase-title">Salesforceへ登録</div>
+      <div class="phase-line"></div>
+    </div>
+    <div class="cards">
+      <div class="card">
+        <div class="card-icon">&#128100;</div>
+        <div class="card-title">主担当の特定</div>
+        <div class="card-desc">主担当フラグのある取引先責任者を特定（なければ最古の担当者）</div>
+        <div class="card-service">Salesforce</div>
+      </div>
+      <div class="card">
+        <div class="card-icon">&#9989;</div>
+        <div class="card-title">ToDoを作成</div>
+        <div class="card-desc">「dodaキャンパス訴求 - ○○株式会社」でToDo登録。コメント欄にスクリプト</div>
+        <div class="card-service">Salesforce</div>
+      </div>
+    </div>
+  </div>
+</div>
+</body>
+</html>

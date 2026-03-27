@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>パターン1: 縦タイムライン</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { font-family: 'Helvetica Neue', 'Hiragino Sans', sans-serif; background: #f8f9fa; color: #333; padding: 40px 20px; }
+  .container { max-width: 720px; margin: 0 auto; }
+  h1 { text-align: center; font-size: 20px; color: #1a1a2e; margin-bottom: 8px; }
+  .subtitle { text-align: center; font-size: 13px; color: #888; margin-bottom: 40px; }
+  .timeline { position: relative; padding-left: 48px; }
+  .timeline::before { content: ''; position: absolute; left: 18px; top: 0; bottom: 0; width: 3px; background: linear-gradient(to bottom, #4361ee, #3a0ca3, #7209b7, #f72585); border-radius: 2px; }
+  .step { position: relative; margin-bottom: 28px; }
+  .step:last-child { margin-bottom: 0; }
+  .dot { position: absolute; left: -38px; top: 4px; width: 14px; height: 14px; border-radius: 50%; border: 3px solid #fff; box-shadow: 0 0 0 2px #4361ee; }
+  .step[data-cat="trigger"] .dot { background: #4361ee; box-shadow: 0 0 0 2px #4361ee; }
+  .step[data-cat="sf"] .dot { background: #0ea5e9; box-shadow: 0 0 0 2px #0ea5e9; }
+  .step[data-cat="sn"] .dot { background: #10b981; box-shadow: 0 0 0 2px #10b981; }
+  .step[data-cat="ai"] .dot { background: #f59e0b; box-shadow: 0 0 0 2px #f59e0b; }
+  .step[data-cat="web"] .dot { background: #8b5cf6; box-shadow: 0 0 0 2px #8b5cf6; }
+  .step[data-cat="output"] .dot { background: #f72585; box-shadow: 0 0 0 2px #f72585; }
+  .card { background: #fff; border-radius: 10px; padding: 16px 20px; box-shadow: 0 1px 4px rgba(0,0,0,0.06); }
+  .card-title { font-size: 14px; font-weight: 700; margin-bottom: 4px; }
+  .card-desc { font-size: 12px; color: #666; line-height: 1.6; }
+  .badge { display: inline-block; font-size: 10px; font-weight: 600; padding: 2px 8px; border-radius: 10px; margin-bottom: 6px; color: #fff; }
+  .badge-trigger { background: #4361ee; }
+  .badge-sf { background: #0ea5e9; }
+  .badge-sn { background: #10b981; }
+  .badge-ai { background: #f59e0b; }
+  .badge-web { background: #8b5cf6; }
+  .badge-output { background: #f72585; }
+  .branch { margin-left: 20px; border-left: 2px dashed #ddd; padding-left: 16px; margin-top: 12px; }
+  .branch-label { font-size: 11px; color: #999; font-weight: 600; margin-bottom: 8px; }
+  .legend { display: flex; gap: 12px; flex-wrap: wrap; justify-content: center; margin-top: 36px; }
+  .legend-item { display: flex; align-items: center; gap: 4px; font-size: 11px; color: #666; }
+  .legend-dot { width: 10px; height: 10px; border-radius: 50%; }
+</style>
+</head>
+<body>
+<div class="container">
+  <h1>dodaキャンパス 掘り起こしトークスクリプト自動生成</h1>
+  <p class="subtitle">n8n ワークフロー全体図</p>
+
+  <div class="timeline">
+    <div class="step" data-cat="trigger">
+      <div class="dot"></div>
+      <div class="card">
+        <span class="badge badge-trigger">トリガー</span>
+        <div class="card-title">① 毎日17時 自動起動</div>
+        <div class="card-desc">スケジュールトリガーで毎日17時に実行開始</div>
+      </div>
+    </div>
+    <div class="step" data-cat="sf">
+      <div class="dot"></div>
+      <div class="card">
+        <span class="badge badge-sf">Salesforce</span>
+        <div class="card-title">② 翌日の対象取引先を取得</div>
+        <div class="card-desc">「次回アクション日 = 翌日」の取引先をSOQLで検索</div>
+      </div>
+    </div>
+    <div class="step" data-cat="sf">
+      <div class="dot"></div>
+      <div class="card">
+        <span class="badge badge-sf">Salesforce</span>
+        <div class="card-title">③ 直近3件の活動履歴を取得</div>
+        <div class="card-desc">電話内容・会話メモなど、直前のコミュニケーション状況を確認</div>
+      </div>
+    </div>
+    <div class="step" data-cat="sn">
+      <div class="dot"></div>
+      <div class="card">
+        <span class="badge badge-sn">SalesNow</span>
+        <div class="card-title">④ 企業情報を取得</div>
+        <div class="card-desc">業界・従業員数・企業概要などの最新情報をAPIで取得</div>
+      </div>
+    </div>
+    <div class="step" data-cat="sn">
+      <div class="dot"></div>
+      <div class="card">
+        <span class="badge badge-sn">SalesNow</span>
+        <div class="card-title">⑤ マイナビ掲載状況を検索</div>
+        <div class="card-desc">マイナビ27/26/25 それぞれの掲載有無を確認。27はURLも取得</div>
+      </div>
+    </div>
+    <div class="step" data-cat="web">
+      <div class="dot"></div>
+      <div class="card">
+        <span class="badge badge-web">Web取得</span>
+        <div class="card-title">⑥ マイナビ27ページから詳細を取得</div>
+        <div class="card-desc">
+          マイナビ27 URLの有無で分岐
+          <div class="branch">
+            <div class="branch-label">▶ URLあり</div>
+            <div class="card-desc">ページHTMLを取得し、Claude AIで解析<br>→ 説明会日程・採用予定人数・過去3年採用実績・募集職種</div>
+          </div>
+          <div class="branch" style="margin-top:8px;">
+            <div class="branch-label">▶ URLなし</div>
+            <div class="card-desc">スキップ（マイナビ情報なしとして続行）</div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="step" data-cat="ai">
+      <div class="dot"></div>
+      <div class="card">
+        <span class="badge badge-ai">Claude AI</span>
+        <div class="card-title">⑦ トークスクリプトを自動生成</div>
+        <div class="card-desc">活動履歴・企業情報・採用状況・dodaキャンパスのサービス概要を入力し、掘り起こし用トークスクリプトを生成</div>
+      </div>
+    </div>
+    <div class="step" data-cat="sf">
+      <div class="dot"></div>
+      <div class="card">
+        <span class="badge badge-sf">Salesforce</span>
+        <div class="card-title">⑧ 主担当の取引先責任者を特定</div>
+        <div class="card-desc">主担当フラグあり → その担当者 / フラグなし → 最古の担当者</div>
+      </div>
+    </div>
+    <div class="step" data-cat="output">
+      <div class="dot"></div>
+      <div class="card">
+        <span class="badge badge-output">アウトプット</span>
+        <div class="card-title">⑨ SalesforceにToDoを作成</div>
+        <div class="card-desc">件名「dodaキャンパス訴求 - ○○株式会社」でToDo登録。<br>コメント欄にトークスクリプト本文を記載し、担当者に紐付け</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="legend">
+    <div class="legend-item"><div class="legend-dot" style="background:#4361ee"></div>トリガー</div>
+    <div class="legend-item"><div class="legend-dot" style="background:#0ea5e9"></div>Salesforce</div>
+    <div class="legend-item"><div class="legend-dot" style="background:#10b981"></div>SalesNow</div>
+    <div class="legend-item"><div class="legend-dot" style="background:#8b5cf6"></div>Web取得</div>
+    <div class="legend-item"><div class="legend-dot" style="background:#f59e0b"></div>Claude AI</div>
+    <div class="legend-item"><div class="legend-dot" style="background:#f72585"></div>アウトプット</div>
+  </div>
+</div>
+</body>
+</html>

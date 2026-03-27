@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>パターン6: ジグザグフロー</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { font-family: 'Helvetica Neue', 'Hiragino Sans', sans-serif; background: #f1f5f9; color: #334155; padding: 40px 20px; }
+  .container { max-width: 740px; margin: 0 auto; }
+  h1 { text-align: center; font-size: 20px; color: #0f172a; margin-bottom: 4px; }
+  .subtitle { text-align: center; font-size: 12px; color: #94a3b8; margin-bottom: 36px; }
+  .row { display: flex; align-items: stretch; margin-bottom: 2px; }
+  .row.reverse { flex-direction: row-reverse; }
+  .step-box { flex: 1; background: #fff; border-radius: 14px; padding: 20px 24px; box-shadow: 0 1px 3px rgba(0,0,0,0.05); border-left: 4px solid; }
+  .row.reverse .step-box { border-left: none; border-right: 4px solid; text-align: right; }
+  .step-box.c1 { border-color: #3b82f6; }
+  .step-box.c2 { border-color: #10b981; }
+  .step-box.c3 { border-color: #8b5cf6; }
+  .step-box.c4 { border-color: #f59e0b; }
+  .step-box.c5 { border-color: #ef4444; }
+  .spacer { flex: 1; }
+  .step-num { font-size: 36px; font-weight: 900; opacity: 0.08; line-height: 1; }
+  .step-title { font-size: 15px; font-weight: 700; margin: -20px 0 6px; }
+  .step-desc { font-size: 12px; color: #64748b; line-height: 1.6; }
+  .step-tags { margin-top: 8px; }
+  .tag { display: inline-block; font-size: 10px; padding: 2px 8px; border-radius: 4px; font-weight: 600; margin-right: 4px; }
+  .tag-sf { background: #dbeafe; color: #2563eb; }
+  .tag-sn { background: #d1fae5; color: #059669; }
+  .tag-ai { background: #fef3c7; color: #d97706; }
+  .tag-web { background: #ede9fe; color: #7c3aed; }
+  .connector { display: flex; align-items: center; justify-content: center; padding: 6px 0; }
+  .connector svg { width: 24px; height: 24px; }
+  .connector path { stroke: #cbd5e1; stroke-width: 2; fill: none; }
+</style>
+</head>
+<body>
+<div class="container">
+  <h1>dodaキャンパス 掘り起こしスクリプト自動生成</h1>
+  <p class="subtitle">n8n Workflow</p>
+
+  <div class="row">
+    <div class="step-box c1">
+      <div class="step-num">01</div>
+      <div class="step-title">対象取引先の自動抽出</div>
+      <div class="step-desc">毎日17時に起動し、Salesforceから翌日が「次回アクション日」の取引先を自動取得します。</div>
+      <div class="step-tags"><span class="tag tag-sf">Salesforce</span></div>
+    </div>
+    <div class="spacer"></div>
+  </div>
+  <div class="connector"><svg viewBox="0 0 24 24"><path d="M12 4v16m-4-4l4 4 4-4"/></svg></div>
+
+  <div class="row reverse">
+    <div class="step-box c2">
+      <div class="step-num">02</div>
+      <div class="step-title">直近の活動履歴を確認</div>
+      <div class="step-desc">直近3件の電話内容・会話メモをSalesforceから取得。前回のコミュニケーション文脈を把握します。</div>
+      <div class="step-tags"><span class="tag tag-sf">Salesforce</span></div>
+    </div>
+    <div class="spacer"></div>
+  </div>
+  <div class="connector"><svg viewBox="0 0 24 24"><path d="M12 4v16m-4-4l4 4 4-4"/></svg></div>
+
+  <div class="row">
+    <div class="step-box c2">
+      <div class="step-num">03</div>
+      <div class="step-title">企業情報＆採用動向を収集</div>
+      <div class="step-desc">SalesNow APIで企業概要（業界・従業員数）を取得。さらにマイナビ27/26/25の掲載状況を検索し、27の掲載URLも取得します。</div>
+      <div class="step-tags"><span class="tag tag-sn">SalesNow</span></div>
+    </div>
+    <div class="spacer"></div>
+  </div>
+  <div class="connector"><svg viewBox="0 0 24 24"><path d="M12 4v16m-4-4l4 4 4-4"/></svg></div>
+
+  <div class="row reverse">
+    <div class="step-box c3">
+      <div class="step-num">04</div>
+      <div class="step-title">マイナビページからAI抽出</div>
+      <div class="step-desc">マイナビ27のページHTMLをClaude AIが解析。説明会日程・採用予定人数・過去3年の新卒採用実績（男女別）を構造化データとして抽出します。</div>
+      <div class="step-tags"><span class="tag tag-web">Web取得</span><span class="tag tag-ai">Claude AI</span></div>
+    </div>
+    <div class="spacer"></div>
+  </div>
+  <div class="connector"><svg viewBox="0 0 24 24"><path d="M12 4v16m-4-4l4 4 4-4"/></svg></div>
+
+  <div class="row">
+    <div class="step-box c4">
+      <div class="step-num">05</div>
+      <div class="step-title">トークスクリプトを自動生成</div>
+      <div class="step-desc">活動履歴・企業情報・採用状況・dodaキャンパスのサービス概要を全て統合し、Claude AIが掘り起こし用のトークスクリプトを生成します。</div>
+      <div class="step-tags"><span class="tag tag-ai">Claude AI</span></div>
+    </div>
+    <div class="spacer"></div>
+  </div>
+  <div class="connector"><svg viewBox="0 0 24 24"><path d="M12 4v16m-4-4l4 4 4-4"/></svg></div>
+
+  <div class="row reverse">
+    <div class="step-box c5">
+      <div class="step-num">06</div>
+      <div class="step-title">SalesforceにToDo自動登録</div>
+      <div class="step-desc">主担当の取引先責任者を特定し、「dodaキャンパス訴求 - ○○株式会社」の件名でToDoを作成。コメント欄にスクリプト全文を記載します。</div>
+      <div class="step-tags"><span class="tag tag-sf">Salesforce</span></div>
+    </div>
+    <div class="spacer"></div>
+  </div>
+</div>
+</body>
+</html>

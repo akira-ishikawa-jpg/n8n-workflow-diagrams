@@ -1,0 +1,513 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>dodaキャンパス 掘り起こしスクリプト自動生成 — ワークフロー図解</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { font-family: 'Helvetica Neue', 'Hiragino Sans', 'Hiragino Kaku Gothic ProN', 'Yu Gothic', sans-serif; background: #f8f9fa; color: #333; padding: 40px 20px; }
+  .container { max-width: 960px; margin: 0 auto; }
+  h1 { text-align: center; font-size: 22px; color: #1a1a2e; margin-bottom: 6px; }
+  .subtitle { text-align: center; font-size: 13px; color: #888; margin-bottom: 12px; }
+  .header-desc { text-align: center; font-size: 12px; color: #64748b; line-height: 1.7; max-width: 600px; margin: 0 auto 36px; }
+
+  /* Two-column layout */
+  .flow-row { display: flex; gap: 16px; margin-bottom: 20px; align-items: stretch; }
+  .flow-left { flex: 1; min-width: 0; }
+  .flow-right { width: 280px; flex-shrink: 0; }
+
+  /* Timeline */
+  .timeline { position: relative; padding-left: 48px; }
+  .timeline::before { content: ''; position: absolute; left: 18px; top: 0; bottom: 0; width: 3px; background: linear-gradient(to bottom, #4361ee, #3a0ca3, #7209b7, #f72585); border-radius: 2px; }
+  .step { position: relative; }
+  .dot { position: absolute; left: -38px; top: 4px; width: 14px; height: 14px; border-radius: 50%; border: 3px solid #fff; }
+  .step[data-cat="trigger"] .dot { background: #4361ee; box-shadow: 0 0 0 2px #4361ee; }
+  .step[data-cat="sf"] .dot { background: #0ea5e9; box-shadow: 0 0 0 2px #0ea5e9; }
+  .step[data-cat="sn"] .dot { background: #10b981; box-shadow: 0 0 0 2px #10b981; }
+  .step[data-cat="ai"] .dot { background: #f59e0b; box-shadow: 0 0 0 2px #f59e0b; }
+  .step[data-cat="web"] .dot { background: #8b5cf6; box-shadow: 0 0 0 2px #8b5cf6; }
+  .step[data-cat="output"] .dot { background: #f72585; box-shadow: 0 0 0 2px #f72585; }
+  .card { background: #fff; border-radius: 10px; padding: 14px 18px; box-shadow: 0 1px 4px rgba(0,0,0,0.06); }
+  .card-title { font-size: 13px; font-weight: 700; margin-bottom: 3px; }
+  .card-desc { font-size: 11px; color: #666; line-height: 1.6; }
+  .badge { display: inline-block; font-size: 9px; font-weight: 600; padding: 2px 7px; border-radius: 10px; margin-bottom: 5px; color: #fff; }
+  .badge-trigger { background: #4361ee; }
+  .badge-sf { background: #0ea5e9; }
+  .badge-sn { background: #10b981; }
+  .badge-ai { background: #f59e0b; }
+  .badge-web { background: #8b5cf6; }
+  .badge-output { background: #f72585; }
+  .branch { margin-left: 16px; border-left: 2px dashed #ddd; padding-left: 12px; margin-top: 8px; }
+  .branch-label { font-size: 10px; color: #999; font-weight: 600; margin-bottom: 4px; }
+
+  /* Memo area */
+  .memo-box { background: #fffde7; border: 1px dashed #e0d68a; border-radius: 10px; padding: 10px 12px; height: 100%; display: flex; flex-direction: column; }
+  .memo-label { font-size: 9px; font-weight: 700; color: #b8a830; margin-bottom: 6px; letter-spacing: 0.5px; }
+  .memo-input { flex: 1; border: none; background: transparent; font-size: 11px; color: #555; line-height: 1.6; resize: none; outline: none; font-family: inherit; min-height: 50px; }
+  .memo-input::placeholder { color: #ccc; }
+
+  /* Legend */
+  .legend { display: flex; gap: 12px; flex-wrap: wrap; justify-content: center; margin-top: 20px; margin-bottom: 40px; }
+  .legend-item { display: flex; align-items: center; gap: 4px; font-size: 11px; color: #666; }
+  .legend-dot { width: 10px; height: 10px; border-radius: 50%; }
+
+  /* Divider */
+  .section-divider { border: none; border-top: 2px solid #e2e8f0; margin: 40px 0 32px; }
+  .section-title { font-size: 18px; font-weight: 800; color: #1a1a2e; margin-bottom: 6px; }
+  .section-subtitle { font-size: 12px; color: #94a3b8; margin-bottom: 20px; }
+
+  /* Talk script example */
+  .script-container { background: #fff; border-radius: 14px; box-shadow: 0 2px 8px rgba(0,0,0,0.06); overflow: hidden; }
+  .script-header { background: linear-gradient(135deg, #1e293b, #334155); color: #fff; padding: 20px 24px; }
+  .script-header h3 { font-size: 15px; margin-bottom: 4px; }
+  .script-header p { font-size: 11px; opacity: 0.7; }
+  .script-meta { display: flex; gap: 16px; flex-wrap: wrap; margin-top: 12px; }
+  .meta-item { font-size: 10px; background: rgba(255,255,255,0.1); padding: 3px 10px; border-radius: 6px; }
+  .script-body { padding: 24px; }
+  .script-phase { margin-bottom: 20px; }
+  .script-phase:last-child { margin-bottom: 0; }
+  .phase-tag { display: inline-block; font-size: 9px; font-weight: 700; padding: 2px 8px; border-radius: 4px; margin-bottom: 8px; }
+  .phase-tag.intro { background: #dbeafe; color: #1d4ed8; }
+  .phase-tag.check { background: #d1fae5; color: #047857; }
+  .phase-tag.deepen { background: #fef3c7; color: #b45309; }
+  .phase-tag.propose { background: #ede9fe; color: #6d28d9; }
+  .phase-tag.next { background: #ffe4e6; color: #be123c; }
+  .script-text { font-size: 13px; line-height: 2; color: #334155; }
+  .script-text .highlight { background: #fef3c7; padding: 1px 4px; border-radius: 3px; font-weight: 600; }
+  .script-text .talk { color: #1e40af; }
+  .script-note { font-size: 10px; color: #94a3b8; margin-top: 4px; font-style: italic; }
+
+  /* Info cards */
+  .info-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 20px; }
+  .info-card { background: #fff; border-radius: 10px; padding: 14px 16px; border-left: 3px solid; box-shadow: 0 1px 3px rgba(0,0,0,0.04); }
+  .info-card.sf-card { border-color: #0ea5e9; }
+  .info-card.sn-card { border-color: #10b981; }
+  .info-card.mn-card { border-color: #8b5cf6; }
+  .info-card.doda-card { border-color: #f59e0b; }
+  .info-card h4 { font-size: 11px; font-weight: 700; margin-bottom: 6px; }
+  .info-card .source-tag { font-size: 8px; font-weight: 600; padding: 1px 5px; border-radius: 3px; color: #fff; margin-left: 4px; }
+  .info-card ul { list-style: none; font-size: 11px; color: #555; line-height: 1.8; }
+  .info-card ul li::before { content: ''; display: inline-block; width: 4px; height: 4px; border-radius: 50%; background: #cbd5e1; margin-right: 6px; vertical-align: middle; }
+
+  /* Save button & toast */
+  .save-bar { position: sticky; top: 0; z-index: 100; background: rgba(255,255,255,0.92); backdrop-filter: blur(8px); border-bottom: 1px solid #e2e8f0; padding: 10px 0; margin-bottom: 20px; display: flex; align-items: center; justify-content: flex-end; gap: 12px; }
+  .save-btn { background: #2563eb; color: #fff; border: none; border-radius: 8px; padding: 8px 20px; font-size: 13px; font-weight: 700; cursor: pointer; transition: all 0.15s; font-family: inherit; display: flex; align-items: center; gap: 6px; }
+  .save-btn:hover { background: #1d4ed8; }
+  .save-btn:active { transform: scale(0.97); }
+  .save-btn svg { width: 16px; height: 16px; }
+  .save-status { font-size: 11px; color: #94a3b8; }
+  .toast { position: fixed; bottom: 24px; left: 50%; transform: translateX(-50%) translateY(80px); background: #1e293b; color: #fff; padding: 10px 24px; border-radius: 10px; font-size: 13px; font-weight: 600; box-shadow: 0 4px 16px rgba(0,0,0,0.15); opacity: 0; transition: all 0.3s ease; z-index: 200; pointer-events: none; }
+  .toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+
+  @media print {
+    .memo-input { border: 1px solid #e0d68a; border-radius: 4px; min-height: 60px; }
+    .save-bar { display: none; }
+    body { padding: 20px; }
+  }
+  @media (max-width: 700px) {
+    .flow-row { flex-direction: column; }
+    .flow-right { width: 100%; }
+    .info-grid { grid-template-columns: 1fr; }
+  }
+</style>
+</head>
+<body>
+<div class="container">
+  <div class="save-bar">
+    <span class="save-status" id="saveStatus"></span>
+    <button class="save-btn" onclick="saveMemos()">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21H5a2 2 0 01-2-2V5a2 2 0 012-2h11l5 5v11a2 2 0 01-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/></svg>
+      メモを保存
+    </button>
+  </div>
+  <div class="toast" id="toast"></div>
+
+  <h1>dodaキャンパス 掘り起こしトークスクリプト自動生成</h1>
+  <p class="subtitle">SalesNow カスタムAIエージェント ワークフロー全体図</p>
+  <p class="header-desc">毎日17時に自動実行。翌日が「次回アクション日」の取引先に対して、活動履歴・企業情報・採用動向を自動収集し、dodaキャンパスを訴求するトークスクリプトを生成してSalesforceにToDo登録します。</p>
+
+  <!-- ===== WORKFLOW DIAGRAM ===== -->
+
+  <div class="flow-row">
+    <div class="flow-left">
+      <div class="timeline">
+        <div class="step" data-cat="trigger">
+          <div class="dot"></div>
+          <div class="card">
+            <span class="badge badge-trigger">トリガー</span>
+            <div class="card-title">① 毎日17時 自動起動</div>
+            <div class="card-desc">スケジュールトリガーで毎日17時に実行開始</div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="flow-right">
+      <div class="memo-box">
+        <div class="memo-label">MEMO</div>
+        <textarea class="memo-input" placeholder="メモを入力..."></textarea>
+      </div>
+    </div>
+  </div>
+
+  <div class="flow-row">
+    <div class="flow-left">
+      <div class="timeline">
+        <div class="step" data-cat="sf">
+          <div class="dot"></div>
+          <div class="card">
+            <span class="badge badge-sf">Salesforce</span>
+            <div class="card-title">② 翌日の対象取引先を取得</div>
+            <div class="card-desc">「次回アクション日 = 翌日」の取引先をSOQLで検索</div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="flow-right">
+      <div class="memo-box">
+        <div class="memo-label">MEMO</div>
+        <textarea class="memo-input" placeholder="メモを入力..."></textarea>
+      </div>
+    </div>
+  </div>
+
+  <div class="flow-row">
+    <div class="flow-left">
+      <div class="timeline">
+        <div class="step" data-cat="sf">
+          <div class="dot"></div>
+          <div class="card">
+            <span class="badge badge-sf">Salesforce</span>
+            <div class="card-title">③ 直近3件の活動履歴を取得</div>
+            <div class="card-desc">電話内容・会話メモなど、直前のコミュニケーション状況を確認</div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="flow-right">
+      <div class="memo-box">
+        <div class="memo-label">MEMO</div>
+        <textarea class="memo-input" placeholder="メモを入力..."></textarea>
+      </div>
+    </div>
+  </div>
+
+  <div class="flow-row">
+    <div class="flow-left">
+      <div class="timeline">
+        <div class="step" data-cat="sn">
+          <div class="dot"></div>
+          <div class="card">
+            <span class="badge badge-sn">SalesNow</span>
+            <div class="card-title">④ 企業情報を取得</div>
+            <div class="card-desc">業界・従業員数・企業概要などの最新情報をAPIで取得</div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="flow-right">
+      <div class="memo-box">
+        <div class="memo-label">MEMO</div>
+        <textarea class="memo-input" placeholder="メモを入力..."></textarea>
+      </div>
+    </div>
+  </div>
+
+  <div class="flow-row">
+    <div class="flow-left">
+      <div class="timeline">
+        <div class="step" data-cat="sn">
+          <div class="dot"></div>
+          <div class="card">
+            <span class="badge badge-sn">SalesNow</span>
+            <div class="card-title">⑤ マイナビ掲載状況を検索</div>
+            <div class="card-desc">マイナビ27/26/25 それぞれの掲載有無を確認。27はURLも取得</div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="flow-right">
+      <div class="memo-box">
+        <div class="memo-label">MEMO</div>
+        <textarea class="memo-input" placeholder="メモを入力..."></textarea>
+      </div>
+    </div>
+  </div>
+
+  <div class="flow-row">
+    <div class="flow-left">
+      <div class="timeline">
+        <div class="step" data-cat="web">
+          <div class="dot"></div>
+          <div class="card">
+            <span class="badge badge-web">Web取得 + AI解析</span>
+            <div class="card-title">⑥ マイナビ27ページから詳細を取得</div>
+            <div class="card-desc">
+              マイナビ27 URLの有無で分岐
+              <div class="branch">
+                <div class="branch-label">&#9654; URLあり</div>
+                <div class="card-desc">ページHTMLを取得 → SalesNow カスタムAIエージェントで解析<br>→ 説明会日程・採用予定人数・過去3年採用実績・募集職種</div>
+              </div>
+              <div class="branch" style="margin-top:6px;">
+                <div class="branch-label">&#9654; URLなし</div>
+                <div class="card-desc">スキップ（マイナビ情報なしとして続行）</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="flow-right">
+      <div class="memo-box">
+        <div class="memo-label">MEMO</div>
+        <textarea class="memo-input" placeholder="メモを入力..."></textarea>
+      </div>
+    </div>
+  </div>
+
+  <div class="flow-row">
+    <div class="flow-left">
+      <div class="timeline">
+        <div class="step" data-cat="ai">
+          <div class="dot"></div>
+          <div class="card">
+            <span class="badge badge-ai">SalesNow カスタムAIエージェント</span>
+            <div class="card-title">⑦ トークスクリプトを自動生成</div>
+            <div class="card-desc">活動履歴・企業情報・採用状況・dodaキャンパスのサービス概要を入力し、掘り起こし用のトークスクリプトを生成</div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="flow-right">
+      <div class="memo-box">
+        <div class="memo-label">MEMO</div>
+        <textarea class="memo-input" placeholder="メモを入力..."></textarea>
+      </div>
+    </div>
+  </div>
+
+  <div class="flow-row">
+    <div class="flow-left">
+      <div class="timeline">
+        <div class="step" data-cat="sf">
+          <div class="dot"></div>
+          <div class="card">
+            <span class="badge badge-sf">Salesforce</span>
+            <div class="card-title">⑧ 主担当の取引先責任者を特定</div>
+            <div class="card-desc">主担当フラグあり → その担当者 / フラグなし → 最古の担当者</div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="flow-right">
+      <div class="memo-box">
+        <div class="memo-label">MEMO</div>
+        <textarea class="memo-input" placeholder="メモを入力..."></textarea>
+      </div>
+    </div>
+  </div>
+
+  <div class="flow-row">
+    <div class="flow-left">
+      <div class="timeline">
+        <div class="step" data-cat="output">
+          <div class="dot"></div>
+          <div class="card">
+            <span class="badge badge-output">アウトプット</span>
+            <div class="card-title">⑨ SalesforceにToDoを作成</div>
+            <div class="card-desc">件名「dodaキャンパス訴求 - ○○株式会社」でToDo登録。<br>コメント欄にトークスクリプト本文を記載し、担当者に紐付け</div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="flow-right">
+      <div class="memo-box">
+        <div class="memo-label">MEMO</div>
+        <textarea class="memo-input" placeholder="メモを入力..."></textarea>
+      </div>
+    </div>
+  </div>
+
+  <div class="legend">
+    <div class="legend-item"><div class="legend-dot" style="background:#4361ee"></div>トリガー</div>
+    <div class="legend-item"><div class="legend-dot" style="background:#0ea5e9"></div>Salesforce</div>
+    <div class="legend-item"><div class="legend-dot" style="background:#10b981"></div>SalesNow</div>
+    <div class="legend-item"><div class="legend-dot" style="background:#8b5cf6"></div>Web取得</div>
+    <div class="legend-item"><div class="legend-dot" style="background:#f59e0b"></div>SalesNow カスタムAIエージェント</div>
+    <div class="legend-item"><div class="legend-dot" style="background:#f72585"></div>アウトプット</div>
+  </div>
+
+  <!-- ===== TALK SCRIPT EXAMPLE ===== -->
+  <hr class="section-divider">
+  <div class="section-title">トークスクリプト作成例</div>
+  <div class="section-subtitle">コベルコシステム株式会社 — 実際の収集データに基づく生成イメージ</div>
+
+  <!-- 収集データサマリー -->
+  <div class="info-grid">
+    <div class="info-card sf-card">
+      <h4>Salesforce — 活動履歴 <span class="source-tag" style="background:#0ea5e9;">SF</span></h4>
+      <ul>
+        <li>直近3件はすべてPardotメール（自動配信）</li>
+        <li>直接の電話・対面コミュニケーションなし</li>
+        <li>SalesNow Lite / AIエージェント案内を受信済</li>
+      </ul>
+    </div>
+    <div class="info-card sn-card">
+      <h4>SalesNow — 企業情報 <span class="source-tag" style="background:#10b981;">SN</span></h4>
+      <ul>
+        <li>コベルコシステム株式会社（法人番号: 7140001007718）</li>
+        <li>情報処理・SI（IBM 51% / 神戸製鋼所 49%）</li>
+        <li>従業員 1,310名 / 売上 542億円 / 資本金 4億円</li>
+        <li>神戸本社 + 東京本社の2拠点体制</li>
+      </ul>
+    </div>
+    <div class="info-card mn-card">
+      <h4>マイナビ — 掲載状況・採用実績 <span class="source-tag" style="background:#8b5cf6;">Web</span></h4>
+      <ul>
+        <li>マイナビ27: <strong>あり</strong>（SE職・営業職を募集）</li>
+        <li>マイナビ26: あり / マイナビ25: あり（3年連続掲載）</li>
+        <li>説明会: WEB随時開催（エントリー後に日程表示）</li>
+        <li>勤務地: 栃木・東京・兵庫・広島・山口</li>
+      </ul>
+      <div style="margin-top:8px;font-size:10px;color:#64748b;">
+        <strong>過去の新卒採用者数（男女別）:</strong>
+        <table style="width:100%;font-size:10px;margin-top:4px;border-collapse:collapse;">
+          <tr style="background:#f8f5ff;"><th style="padding:2px 6px;text-align:left;">年度</th><th style="padding:2px 6px;">男</th><th style="padding:2px 6px;">女</th><th style="padding:2px 6px;">計</th><th style="padding:2px 6px;">定着率</th></tr>
+          <tr><td style="padding:2px 6px;">2025年</td><td style="padding:2px 6px;text-align:center;">21</td><td style="padding:2px 6px;text-align:center;">21</td><td style="padding:2px 6px;text-align:center;font-weight:700;">42</td><td style="padding:2px 6px;text-align:center;">100%</td></tr>
+          <tr><td style="padding:2px 6px;">2024年</td><td style="padding:2px 6px;text-align:center;">26</td><td style="padding:2px 6px;text-align:center;">21</td><td style="padding:2px 6px;text-align:center;font-weight:700;">47</td><td style="padding:2px 6px;text-align:center;">100%</td></tr>
+          <tr><td style="padding:2px 6px;">2023年</td><td style="padding:2px 6px;text-align:center;">31</td><td style="padding:2px 6px;text-align:center;">32</td><td style="padding:2px 6px;text-align:center;font-weight:700;">63</td><td style="padding:2px 6px;text-align:center;">98.4%</td></tr>
+        </table>
+      </div>
+    </div>
+    <div class="info-card doda-card">
+      <h4>dodaキャンパス — 訴求ポイント <span class="source-tag" style="background:#f59e0b;">doda</span></h4>
+      <ul>
+        <li>26〜29卒 約26万人の登録学生</li>
+        <li>全国250校と連携した育成プログラム</li>
+        <li>適性検査入力率70%超 → 精度の高いマッチング</li>
+        <li>AIロジックで自社に合う学生を優先表示</li>
+        <li>地方学生の発掘にも対応</li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- スクリプト本体 -->
+  <div class="script-container">
+    <div class="script-header">
+      <h3>dodaキャンパス訴求 — コベルコシステム株式会社</h3>
+      <p>自動生成トークスクリプト（掘り起こし）</p>
+      <div class="script-meta">
+        <span class="meta-item">対象: コベルコシステム株式会社</span>
+        <span class="meta-item">業種: 情報処理・SI</span>
+        <span class="meta-item">従業員: 1,310名</span>
+        <span class="meta-item">マイナビ27: 掲載中</span>
+      </div>
+    </div>
+    <div class="script-body">
+
+      <div class="script-phase">
+        <div class="phase-tag intro">導入 — 前回の接点を振り返り</div>
+        <div class="script-text">
+          <span class="talk">「お忙しいところ恐れ入ります。ベネッセiキャリアの○○と申します。</span><br>
+          <span class="talk">以前、弊社のサービスについてご案内をお送りさせていただいておりまして、本日改めてお電話いたしました。</span><br>
+          <span class="talk">御社の<span class="highlight">新卒採用のご状況</span>について、少しだけお時間をいただけますでしょうか。」</span>
+        </div>
+        <div class="script-note">※ 直近は自動メールのみで直接接触なし。初回架電に近いトーンで丁寧に。</div>
+      </div>
+
+      <div class="script-phase">
+        <div class="phase-tag check">状況確認 — 採用活動の現状把握</div>
+        <div class="script-text">
+          <span class="talk">「御社では<span class="highlight">マイナビ2027</span>にSE職・営業職で掲載されていらっしゃいますよね。</span><br>
+          <span class="talk">現在WEB説明会も実施されているとお見受けしましたが、27卒の採用活動は順調に進んでいらっしゃいますか？」</span><br><br>
+          <span class="talk">「ちなみに、マイナビさんは<span class="highlight">25卒から3年連続</span>でご利用いただいているようですが、母集団の形成や学生の質といった面ではいかがでしょうか？</span><br><br>
+          <span class="talk">マイナビさんのページを拝見すると、<span class="highlight">2023年は63名、2024年は47名、2025年は42名</span>と、直近で採用人数が減少傾向にあるようですが、これは採用を絞られているのか、それとも応募が集まりにくくなっているといった背景がおありでしょうか？」</span>
+        </div>
+        <div class="script-note">※ マイナビ25/26/27すべて掲載中＋採用者数が63→47→42名と減少傾向。数字を使って課題仮説を投げかける。定着率は98〜100%と極めて高く、辞退ではなく母集団の問題と推察。</div>
+      </div>
+
+      <div class="script-phase">
+        <div class="phase-tag deepen">深掘り — 採用課題のヒアリング</div>
+        <div class="script-text">
+          <span class="talk">「御社は<span class="highlight">従業員1,310名規模のSIer</span>で、IBM様と神戸製鋼所様の合弁ということで、非常に安定した基盤をお持ちですよね。</span><br>
+          <span class="talk">一方で、SI業界全体としてIT人材の獲得競争が激化している中、<span class="highlight">栃木・広島・山口といった地方拠点</span>への配属を含む採用となると、なかなか学生さんへのリーチが難しい面もあるのではないでしょうか。」</span><br><br>
+          <span class="talk">「現在マイナビさん以外に、ダイレクトリクルーティングやスカウト型のサービスはお使いでしょうか？」</span>
+        </div>
+        <div class="script-note">※ 5拠点の地方勤務地がある点をSalesNow企業情報から把握済み。地方採用の課題に紐付ける。</div>
+      </div>
+
+      <div class="script-phase">
+        <div class="phase-tag propose">提案 — dodaキャンパスの訴求</div>
+        <div class="script-text">
+          <span class="talk">「実は弊社が提供している<span class="highlight">dodaキャンパス</span>というサービスが、まさにそういった課題にお役立ていただけるものでして。」</span><br><br>
+          <span class="talk">「dodaキャンパスは<span class="highlight">26〜29卒で約26万人の学生</span>が登録しているスカウト型の新卒採用サービスです。特徴的なのは3点ございまして――</span><br><br>
+          <span class="talk">1つ目が、<span class="highlight">全国約250の大学と連携</span>しており、地方の大学にもリーチできること。御社の広島・山口拠点の採用にもフィットします。</span><br><br>
+          <span class="talk">2つ目が、<span class="highlight">適性検査の入力率が70%超</span>で、学生の志向や能力が可視化されているので、御社のSE職・営業職それぞれに合った学生を効率的に見つけていただけます。</span><br><br>
+          <span class="talk">3つ目が、<span class="highlight">AIが自社にマッチした学生を優先表示</span>してくれるので、マイナビさんのような求人広告とは異なり、"待ち"ではなく"攻め"の採用が可能です。」</span>
+        </div>
+        <div class="script-note">※ 「集める採用」から「合う採用」への転換がキーメッセージ。マイナビとの併用を提案するスタンスで。</div>
+      </div>
+
+      <div class="script-phase">
+        <div class="phase-tag next">ネクストアクション — クロージング</div>
+        <div class="script-text">
+          <span class="talk">「マイナビさんでの広報活動はそのままに、<span class="highlight">dodaキャンパスを併用</span>されることで、ナビで届かない層へのアプローチが可能になります。</span><br><br>
+          <span class="talk">もしよろしければ、<span class="highlight">御社の採用要件に合った学生がどれくらいいるか</span>、デモ画面でお見せすることもできますので、30分ほどお時間をいただけませんか？</span><br><br>
+          <span class="talk">来週でしたら火曜・水曜の午後が空いておりますが、ご都合いかがでしょうか。」</span>
+        </div>
+        <div class="script-note">※ マイナビとの共存を強調し、リプレイスではなく追加提案として位置づける。</div>
+      </div>
+
+    </div>
+  </div>
+
+</div>
+<script>
+// ---- メモの保存・読み込み（localStorage） ----
+const STORAGE_KEY = 'doda_workflow_memos';
+
+function saveMemos() {
+  const textareas = document.querySelectorAll('.memo-input');
+  const data = Array.from(textareas).map(ta => ta.value);
+  localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
+
+  // 保存日時を表示
+  const now = new Date();
+  const ts = `${now.getMonth()+1}/${now.getDate()} ${String(now.getHours()).padStart(2,'0')}:${String(now.getMinutes()).padStart(2,'0')}`;
+  document.getElementById('saveStatus').textContent = `最終保存: ${ts}`;
+
+  // トースト通知
+  showToast('メモを保存しました');
+}
+
+function loadMemos() {
+  const raw = localStorage.getItem(STORAGE_KEY);
+  if (!raw) return;
+  try {
+    const data = JSON.parse(raw);
+    const textareas = document.querySelectorAll('.memo-input');
+    data.forEach((val, i) => { if (textareas[i]) textareas[i].value = val; });
+    document.getElementById('saveStatus').textContent = '保存済みメモを読み込みました';
+  } catch(e) {}
+}
+
+function showToast(msg) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  setTimeout(() => t.classList.remove('show'), 2000);
+}
+
+// Ctrl+S / Cmd+S で保存
+document.addEventListener('keydown', e => {
+  if ((e.ctrlKey || e.metaKey) && e.key === 's') {
+    e.preventDefault();
+    saveMemos();
+  }
+});
+
+// ページ読み込み時に復元
+window.addEventListener('DOMContentLoaded', loadMemos);
+</script>
+</body>
+</html>

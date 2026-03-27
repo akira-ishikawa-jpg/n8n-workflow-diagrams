@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>パターン9: メトロマップ風</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { font-family: 'Helvetica Neue', 'Hiragino Sans', sans-serif; background: #fefefe; color: #333; padding: 48px 20px; }
+  .container { max-width: 720px; margin: 0 auto; }
+  h1 { font-size: 20px; text-align: center; margin-bottom: 4px; }
+  .subtitle { text-align: center; font-size: 12px; color: #999; margin-bottom: 40px; }
+  .metro { position: relative; }
+  .line { position: absolute; left: 34px; top: 0; bottom: 0; width: 6px; border-radius: 3px; }
+  .station { display: flex; align-items: flex-start; gap: 20px; margin-bottom: 24px; position: relative; }
+  .station:last-child { margin-bottom: 0; }
+  .station-dot { width: 24px; height: 24px; border-radius: 50%; border: 4px solid #fff; box-shadow: 0 0 0 3px; flex-shrink: 0; margin-top: 2px; margin-left: 22px; position: relative; z-index: 2; }
+  .station-info { flex: 1; }
+  .station-name { font-size: 14px; font-weight: 700; margin-bottom: 2px; }
+  .station-detail { font-size: 11px; color: #777; line-height: 1.6; }
+  .station-badge { display: inline-block; font-size: 9px; font-weight: 600; padding: 1px 6px; border-radius: 3px; margin-top: 4px; }
+  /* Blue Line - Salesforce */
+  .line-blue { background: #2563eb; }
+  .dot-blue { background: #2563eb; box-shadow: 0 0 0 3px #2563eb; }
+  .badge-blue { background: #dbeafe; color: #1d4ed8; }
+  /* Green Line - SalesNow */
+  .line-green { background: #059669; }
+  .dot-green { background: #059669; box-shadow: 0 0 0 3px #059669; }
+  .badge-green { background: #d1fae5; color: #047857; }
+  /* Purple Line - Web/AI */
+  .line-purple { background: #7c3aed; }
+  .dot-purple { background: #7c3aed; box-shadow: 0 0 0 3px #7c3aed; }
+  .badge-purple { background: #ede9fe; color: #6d28d9; }
+  /* Amber Line - AI Generate */
+  .line-amber { background: #d97706; }
+  .dot-amber { background: #d97706; box-shadow: 0 0 0 3px #d97706; }
+  .badge-amber { background: #fef3c7; color: #b45309; }
+  /* Red Line - Output */
+  .dot-red { background: #dc2626; box-shadow: 0 0 0 3px #dc2626; }
+  .badge-red { background: #fee2e2; color: #b91c1c; }
+  .transfer { display: inline-block; font-size: 9px; color: #999; border: 1px solid #ddd; border-radius: 3px; padding: 0 4px; margin-left: 4px; }
+  .section-label { margin-left: 66px; font-size: 10px; font-weight: 700; letter-spacing: 2px; text-transform: uppercase; margin-bottom: 12px; padding: 3px 0; border-bottom: 1px solid #eee; }
+  .section-label.blue { color: #2563eb; }
+  .section-label.green { color: #059669; }
+  .section-label.purple { color: #7c3aed; }
+  .section-label.amber { color: #d97706; }
+  .section-label.red { color: #dc2626; }
+</style>
+</head>
+<body>
+<div class="container">
+  <h1>dodaキャンパス 掘り起こしスクリプト自動生成</h1>
+  <p class="subtitle">Workflow Route Map</p>
+
+  <div class="metro">
+    <div class="line line-blue" style="top:0;height:180px;"></div>
+    <div class="line line-green" style="top:180px;height:200px;"></div>
+    <div class="line line-purple" style="top:380px;height:100px;"></div>
+    <div class="line line-amber" style="top:480px;height:100px;"></div>
+    <div class="line" style="top:580px;bottom:0;background:#dc2626;"></div>
+
+    <div class="section-label blue">Salesforce Line</div>
+
+    <div class="station">
+      <div class="station-dot dot-blue"></div>
+      <div class="station-info">
+        <div class="station-name">毎日17時 自動起動</div>
+        <div class="station-detail">スケジュールトリガーで翌日分の処理を開始</div>
+      </div>
+    </div>
+
+    <div class="station">
+      <div class="station-dot dot-blue"></div>
+      <div class="station-info">
+        <div class="station-name">対象取引先の抽出</div>
+        <div class="station-detail">次回アクション日＝翌日の取引先をSOQLで検索</div>
+        <span class="station-badge badge-blue">Salesforce</span>
+      </div>
+    </div>
+
+    <div class="station">
+      <div class="station-dot dot-blue"></div>
+      <div class="station-info">
+        <div class="station-name">活動履歴の取得</div>
+        <div class="station-detail">直近3件の電話内容・会話メモを確認</div>
+        <span class="station-badge badge-blue">Salesforce</span>
+        <span class="transfer">&#8594; SalesNow Lineに乗り換え</span>
+      </div>
+    </div>
+
+    <div class="section-label green">SalesNow Line</div>
+
+    <div class="station">
+      <div class="station-dot dot-green"></div>
+      <div class="station-info">
+        <div class="station-name">企業情報の取得</div>
+        <div class="station-detail">業界・従業員数・企業概要をAPIで取得</div>
+        <span class="station-badge badge-green">SalesNow API</span>
+      </div>
+    </div>
+
+    <div class="station">
+      <div class="station-dot dot-green"></div>
+      <div class="station-info">
+        <div class="station-name">マイナビ掲載状況の検索</div>
+        <div class="station-detail">マイナビ27/26/25の掲載有無を確認。27はURLも取得</div>
+        <span class="station-badge badge-green">SalesNow API</span>
+        <span class="transfer">&#8594; AI Lineに乗り換え</span>
+      </div>
+    </div>
+
+    <div class="section-label purple">AI Analysis Line</div>
+
+    <div class="station">
+      <div class="station-dot dot-purple"></div>
+      <div class="station-info">
+        <div class="station-name">マイナビ27ページのAI解析</div>
+        <div class="station-detail">説明会日程・採用人数・過去3年採用実績を抽出</div>
+        <span class="station-badge badge-purple">Claude AI</span>
+      </div>
+    </div>
+
+    <div class="section-label amber">Generation Line</div>
+
+    <div class="station">
+      <div class="station-dot dot-amber"></div>
+      <div class="station-info">
+        <div class="station-name">トークスクリプト生成</div>
+        <div class="station-detail">全情報を統合し、dodaキャンパス訴求の掘り起こしスクリプトを自動生成</div>
+        <span class="station-badge badge-amber">Claude AI</span>
+        <span class="transfer">&#8594; Salesforce Lineに戻る</span>
+      </div>
+    </div>
+
+    <div class="section-label red">Output Line</div>
+
+    <div class="station">
+      <div class="station-dot dot-red"></div>
+      <div class="station-info">
+        <div class="station-name">主担当者の特定</div>
+        <div class="station-detail">商談の取引先責任者から主担当フラグを確認</div>
+        <span class="station-badge badge-red">Salesforce</span>
+      </div>
+    </div>
+
+    <div class="station">
+      <div class="station-dot dot-red"></div>
+      <div class="station-info">
+        <div class="station-name">ToDo作成・登録 &#127937;</div>
+        <div class="station-detail">「dodaキャンパス訴求 - ○○株式会社」で担当者にToDo登録。コメント欄にスクリプト全文</div>
+        <span class="station-badge badge-red">Salesforce</span>
+      </div>
+    </div>
+  </div>
+</div>
+</body>
+</html>

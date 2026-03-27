@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>パターン4: ファネル型</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { font-family: 'Helvetica Neue', 'Hiragino Sans', sans-serif; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: #fff; padding: 48px 20px; min-height: 100vh; }
+  .container { max-width: 680px; margin: 0 auto; }
+  h1 { font-size: 22px; text-align: center; margin-bottom: 4px; }
+  .subtitle { text-align: center; font-size: 12px; opacity: 0.7; margin-bottom: 40px; }
+  .funnel { display: flex; flex-direction: column; align-items: center; gap: 0; }
+  .funnel-step { position: relative; padding: 18px 24px; text-align: center; }
+  .funnel-step::before { content: ''; position: absolute; top: 0; bottom: 0; left: 50%; transform: translateX(-50%); z-index: 0; border-radius: 12px; }
+  .funnel-step:nth-child(1)::before { width: 100%; background: rgba(255,255,255,0.12); }
+  .funnel-step:nth-child(2)::before { width: 88%; background: rgba(255,255,255,0.10); }
+  .funnel-step:nth-child(3)::before { width: 76%; background: rgba(255,255,255,0.08); }
+  .funnel-step:nth-child(4)::before { width: 64%; background: rgba(255,255,255,0.06); }
+  .funnel-step:nth-child(5)::before { width: 52%; background: rgba(255,255,255,0.15); }
+  .step-content { position: relative; z-index: 1; }
+  .step-num { font-size: 10px; font-weight: 800; opacity: 0.5; letter-spacing: 2px; }
+  .step-title { font-size: 16px; font-weight: 700; margin: 4px 0; }
+  .step-desc { font-size: 11px; opacity: 0.8; line-height: 1.5; max-width: 480px; margin: 0 auto; }
+  .step-services { display: flex; gap: 6px; justify-content: center; margin-top: 8px; }
+  .step-pill { font-size: 9px; background: rgba(255,255,255,0.2); padding: 2px 8px; border-radius: 10px; backdrop-filter: blur(4px); }
+  .arrow-down { text-align: center; font-size: 18px; opacity: 0.4; margin: 4px 0; }
+  .result-box { margin-top: 28px; background: rgba(255,255,255,0.15); border-radius: 16px; padding: 24px; text-align: center; backdrop-filter: blur(10px); border: 1px solid rgba(255,255,255,0.2); }
+  .result-box .icon { font-size: 36px; margin-bottom: 8px; }
+  .result-box .title { font-size: 16px; font-weight: 700; margin-bottom: 4px; }
+  .result-box .desc { font-size: 12px; opacity: 0.8; }
+</style>
+</head>
+<body>
+<div class="container">
+  <h1>dodaキャンパス 掘り起こしスクリプト自動生成</h1>
+  <p class="subtitle">データファネル — 情報を絞り込み、最適なスクリプトを生成</p>
+
+  <div class="funnel">
+    <div class="funnel-step">
+      <div class="step-content">
+        <div class="step-num">STEP 01</div>
+        <div class="step-title">対象の抽出</div>
+        <div class="step-desc">毎日17時に翌日のアクション日を持つ全取引先を自動検索</div>
+        <div class="step-services"><span class="step-pill">Salesforce</span><span class="step-pill">スケジューラ</span></div>
+      </div>
+    </div>
+    <div class="arrow-down">&#9660;</div>
+    <div class="funnel-step">
+      <div class="step-content">
+        <div class="step-num">STEP 02</div>
+        <div class="step-title">コミュニケーション履歴の収集</div>
+        <div class="step-desc">直近3件の電話内容・会話メモを確認し、前回の文脈を把握</div>
+        <div class="step-services"><span class="step-pill">Salesforce 活動</span></div>
+      </div>
+    </div>
+    <div class="arrow-down">&#9660;</div>
+    <div class="funnel-step">
+      <div class="step-content">
+        <div class="step-num">STEP 03</div>
+        <div class="step-title">企業情報 + 採用動向の収集</div>
+        <div class="step-desc">企業概要（業界・従業員数）を取得し、マイナビ27/26/25の掲載状況・説明会日程・過去3年の採用実績を収集</div>
+        <div class="step-services"><span class="step-pill">SalesNow</span><span class="step-pill">マイナビ</span><span class="step-pill">Claude AI 解析</span></div>
+      </div>
+    </div>
+    <div class="arrow-down">&#9660;</div>
+    <div class="funnel-step">
+      <div class="step-content">
+        <div class="step-num">STEP 04</div>
+        <div class="step-title">AIがトークスクリプトを生成</div>
+        <div class="step-desc">全ての収集情報とdodaキャンパスのサービス特徴を入力。掘り起こし電話に最適なスクリプトを自動生成</div>
+        <div class="step-services"><span class="step-pill">Claude AI</span></div>
+      </div>
+    </div>
+    <div class="arrow-down">&#9660;</div>
+    <div class="funnel-step">
+      <div class="step-content">
+        <div class="step-num">STEP 05</div>
+        <div class="step-title">Salesforceに自動登録</div>
+        <div class="step-desc">主担当の取引先責任者を特定し、ToDoとしてスクリプトを登録</div>
+        <div class="step-services"><span class="step-pill">Salesforce ToDo</span></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="result-box">
+    <div class="icon">&#128161;</div>
+    <div class="title">翌朝、担当者はToDoを開くだけ</div>
+    <div class="desc">顧客ごとにカスタマイズされたトークスクリプトがSalesforceに準備済み</div>
+  </div>
+</div>
+</body>
+</html>

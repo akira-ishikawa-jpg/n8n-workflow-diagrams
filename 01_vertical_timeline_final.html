@@ -7,18 +7,13 @@
 <style>
   * { margin: 0; padding: 0; box-sizing: border-box; }
   body { font-family: 'Helvetica Neue', 'Hiragino Sans', 'Hiragino Kaku Gothic ProN', 'Yu Gothic', sans-serif; background: #f8f9fa; color: #333; padding: 40px 20px; }
-  .container { max-width: 960px; margin: 0 auto; }
+  .container { max-width: 760px; margin: 0 auto; }
   h1 { text-align: center; font-size: 22px; color: #1a1a2e; margin-bottom: 6px; }
   .subtitle { text-align: center; font-size: 13px; color: #888; margin-bottom: 12px; }
   .header-desc { text-align: center; font-size: 12px; color: #64748b; line-height: 1.7; max-width: 600px; margin: 0 auto 36px; }
 
-  /* Two-column layout */
-  .flow-row { display: flex; gap: 16px; margin-bottom: 20px; align-items: stretch; }
-  .flow-left { flex: 1; min-width: 0; }
-  .flow-right { width: 280px; flex-shrink: 0; }
-
   /* Timeline */
-  .timeline { position: relative; padding-left: 48px; }
+  .timeline { position: relative; padding-left: 48px; margin-bottom: 20px; }
   .timeline::before { content: ''; position: absolute; left: 18px; top: 0; bottom: 0; width: 3px; background: linear-gradient(to bottom, #4361ee, #3a0ca3, #7209b7, #f72585); border-radius: 2px; }
   .step { position: relative; }
   .dot { position: absolute; left: -38px; top: 4px; width: 14px; height: 14px; border-radius: 50%; border: 3px solid #fff; }
@@ -40,12 +35,7 @@
   .badge-output { background: #f72585; }
   .branch { margin-left: 16px; border-left: 2px dashed #ddd; padding-left: 12px; margin-top: 8px; }
   .branch-label { font-size: 10px; color: #999; font-weight: 600; margin-bottom: 4px; }
-
-  /* Memo area */
-  .memo-box { background: #fffde7; border: 1px dashed #e0d68a; border-radius: 10px; padding: 10px 12px; height: 100%; display: flex; flex-direction: column; }
-  .memo-label { font-size: 9px; font-weight: 700; color: #b8a830; margin-bottom: 6px; letter-spacing: 0.5px; }
-  .memo-input { flex: 1; border: none; background: transparent; font-size: 11px; color: #555; line-height: 1.6; resize: none; outline: none; font-family: inherit; min-height: 50px; }
-  .memo-input::placeholder { color: #ccc; }
+  .card-note { font-size: 10px; color: #94a3b8; margin-top: 6px; font-style: italic; border-top: 1px dashed #e2e8f0; padding-top: 5px; }
 
   /* Legend */
   .legend { display: flex; gap: 12px; flex-wrap: wrap; justify-content: center; margin-top: 20px; margin-bottom: 40px; }
@@ -90,242 +80,131 @@
   .info-card ul { list-style: none; font-size: 11px; color: #555; line-height: 1.8; }
   .info-card ul li::before { content: ''; display: inline-block; width: 4px; height: 4px; border-radius: 50%; background: #cbd5e1; margin-right: 6px; vertical-align: middle; }
 
-  /* Save button & toast */
-  .save-bar { position: sticky; top: 0; z-index: 100; background: rgba(255,255,255,0.92); backdrop-filter: blur(8px); border-bottom: 1px solid #e2e8f0; padding: 10px 0; margin-bottom: 20px; display: flex; align-items: center; justify-content: flex-end; gap: 12px; }
-  .save-btn { background: #2563eb; color: #fff; border: none; border-radius: 8px; padding: 8px 20px; font-size: 13px; font-weight: 700; cursor: pointer; transition: all 0.15s; font-family: inherit; display: flex; align-items: center; gap: 6px; }
-  .save-btn:hover { background: #1d4ed8; }
-  .save-btn:active { transform: scale(0.97); }
-  .save-btn svg { width: 16px; height: 16px; }
-  .save-status { font-size: 11px; color: #94a3b8; }
-  .toast { position: fixed; bottom: 24px; left: 50%; transform: translateX(-50%) translateY(80px); background: #1e293b; color: #fff; padding: 10px 24px; border-radius: 10px; font-size: 13px; font-weight: 600; box-shadow: 0 4px 16px rgba(0,0,0,0.15); opacity: 0; transition: all 0.3s ease; z-index: 200; pointer-events: none; }
-  .toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
-
   @media print {
-    .memo-input { border: 1px solid #e0d68a; border-radius: 4px; min-height: 60px; }
-    .save-bar { display: none; }
     body { padding: 20px; }
   }
   @media (max-width: 700px) {
-    .flow-row { flex-direction: column; }
-    .flow-right { width: 100%; }
     .info-grid { grid-template-columns: 1fr; }
   }
 </style>
 </head>
 <body>
 <div class="container">
-  <div class="save-bar">
-    <span class="save-status" id="saveStatus"></span>
-    <button class="save-btn" onclick="saveMemos()">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21H5a2 2 0 01-2-2V5a2 2 0 012-2h11l5 5v11a2 2 0 01-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/></svg>
-      メモを保存
-    </button>
-  </div>
-  <div class="toast" id="toast"></div>
 
   <h1>dodaキャンパス 掘り起こしトークスクリプト自動生成</h1>
   <p class="subtitle">SalesNow カスタムAIエージェント ワークフロー全体図</p>
-  <p class="header-desc">毎日17時に自動実行。翌日が「次回アクション日」の取引先に対して、活動履歴・企業情報・採用動向を自動収集し、dodaキャンパスを訴求するトークスクリプトを生成してSalesforceにToDo登録します。</p>
+  <p class="header-desc">毎日18:30に自動実行。翌日が「ネクストアクション日」の取引先責任者に対して、活動履歴・企業情報・採用動向を自動収集し、dodaキャンパスを訴求するトークスクリプトを生成してSalesforceにToDo登録します。</p>
 
   <!-- ===== WORKFLOW DIAGRAM ===== -->
 
-  <div class="flow-row">
-    <div class="flow-left">
-      <div class="timeline">
-        <div class="step" data-cat="trigger">
-          <div class="dot"></div>
-          <div class="card">
-            <span class="badge badge-trigger">トリガー</span>
-            <div class="card-title">① 毎日17時 自動起動</div>
-            <div class="card-desc">スケジュールトリガーで毎日17時に実行開始</div>
-          </div>
-        </div>
-      </div>
-    </div>
-    <div class="flow-right">
-      <div class="memo-box">
-        <div class="memo-label">MEMO</div>
-        <textarea class="memo-input" placeholder="メモを入力..."></textarea>
-      </div>
-    </div>
-  </div>
+  <div class="timeline">
 
-  <div class="flow-row">
-    <div class="flow-left">
-      <div class="timeline">
-        <div class="step" data-cat="sf">
-          <div class="dot"></div>
-          <div class="card">
-            <span class="badge badge-sf">Salesforce</span>
-            <div class="card-title">② 翌日の対象取引先を取得</div>
-            <div class="card-desc">「次回アクション日 = 翌日」の取引先をSOQLで検索</div>
-          </div>
-        </div>
+    <div class="step" data-cat="trigger">
+      <div class="dot"></div>
+      <div class="card">
+        <span class="badge badge-trigger">トリガー</span>
+        <div class="card-title">① 毎日18:30 自動起動</div>
+        <div class="card-desc">スケジュールトリガーで毎日18:30に実行開始（翌朝までに完了すればOK）</div>
       </div>
     </div>
-    <div class="flow-right">
-      <div class="memo-box">
-        <div class="memo-label">MEMO</div>
-        <textarea class="memo-input" placeholder="メモを入力..."></textarea>
-      </div>
-    </div>
-  </div>
 
-  <div class="flow-row">
-    <div class="flow-left">
-      <div class="timeline">
-        <div class="step" data-cat="sf">
-          <div class="dot"></div>
-          <div class="card">
-            <span class="badge badge-sf">Salesforce</span>
-            <div class="card-title">③ 直近3件の活動履歴を取得</div>
-            <div class="card-desc">電話内容・会話メモなど、直前のコミュニケーション状況を確認</div>
-          </div>
-        </div>
+    <div class="step" data-cat="sf" style="margin-top:20px;">
+      <div class="dot"></div>
+      <div class="card">
+        <span class="badge badge-sf">Salesforce</span>
+        <div class="card-title">② 翌日の対象取引先責任者を取得</div>
+        <div class="card-desc">取引先責任者の「ネクストアクション日 = 翌日」のものをSOQLで検索<br>
+          目安：約100社/日・2,000社/月（最大5,000件/月）</div>
       </div>
     </div>
-    <div class="flow-right">
-      <div class="memo-box">
-        <div class="memo-label">MEMO</div>
-        <textarea class="memo-input" placeholder="メモを入力..."></textarea>
-      </div>
-    </div>
-  </div>
 
-  <div class="flow-row">
-    <div class="flow-left">
-      <div class="timeline">
-        <div class="step" data-cat="sn">
-          <div class="dot"></div>
-          <div class="card">
-            <span class="badge badge-sn">SalesNow</span>
-            <div class="card-title">④ 企業情報を取得</div>
-            <div class="card-desc">業界・従業員数・企業概要などの最新情報をAPIで取得</div>
-          </div>
+    <div class="step" data-cat="sf" style="margin-top:20px;">
+      <div class="dot"></div>
+      <div class="card">
+        <span class="badge badge-sf">Salesforce</span>
+        <div class="card-title">③ 活動履歴を取得</div>
+        <div class="card-desc">
+          以下の情報をSalesforceから取得：<br>
+          <strong>商談（直近1件）</strong>：失注理由・IS引き継ぎ事項<br>
+          <strong>架電履歴（直近3件）</strong>：通話内容・メモ<br>
+          <strong>セミナー申し込み（直近1件）</strong>：参加履歴<br>
+          <strong>項目</strong>：ネクストアクション内容
         </div>
       </div>
     </div>
-    <div class="flow-right">
-      <div class="memo-box">
-        <div class="memo-label">MEMO</div>
-        <textarea class="memo-input" placeholder="メモを入力..."></textarea>
-      </div>
-    </div>
-  </div>
 
-  <div class="flow-row">
-    <div class="flow-left">
-      <div class="timeline">
-        <div class="step" data-cat="sn">
-          <div class="dot"></div>
-          <div class="card">
-            <span class="badge badge-sn">SalesNow</span>
-            <div class="card-title">⑤ マイナビ掲載状況を検索</div>
-            <div class="card-desc">マイナビ27/26/25 それぞれの掲載有無を確認。27はURLも取得</div>
-          </div>
+    <div class="step" data-cat="sn" style="margin-top:20px;">
+      <div class="dot"></div>
+      <div class="card">
+        <span class="badge badge-sn">SalesNow</span>
+        <div class="card-title">④ 企業情報・求人情報を取得</div>
+        <div class="card-desc">
+          SalesNow APIで以下を取得：<br>
+          <strong>企業基本情報</strong>：業界・従業員数・企業概要<br>
+          <strong>中途求人</strong>：DODA 直近3件<br>
+          <strong>新卒求人</strong>：リクナビ2027 直近3件
         </div>
       </div>
     </div>
-    <div class="flow-right">
-      <div class="memo-box">
-        <div class="memo-label">MEMO</div>
-        <textarea class="memo-input" placeholder="メモを入力..."></textarea>
-      </div>
-    </div>
-  </div>
 
-  <div class="flow-row">
-    <div class="flow-left">
-      <div class="timeline">
-        <div class="step" data-cat="web">
-          <div class="dot"></div>
-          <div class="card">
-            <span class="badge badge-web">Web取得 + AI解析</span>
-            <div class="card-title">⑥ マイナビ27ページから詳細を取得</div>
-            <div class="card-desc">
-              マイナビ27 URLの有無で分岐
-              <div class="branch">
-                <div class="branch-label">&#9654; URLあり</div>
-                <div class="card-desc">ページHTMLを取得 → SalesNow カスタムAIエージェントで解析<br>→ 説明会日程・採用予定人数・過去3年採用実績・募集職種</div>
-              </div>
-              <div class="branch" style="margin-top:6px;">
-                <div class="branch-label">&#9654; URLなし</div>
-                <div class="card-desc">スキップ（マイナビ情報なしとして続行）</div>
-              </div>
-            </div>
-          </div>
-        </div>
+    <div class="step" data-cat="sn" style="margin-top:20px;">
+      <div class="dot"></div>
+      <div class="card">
+        <span class="badge badge-sn">SalesNow</span>
+        <div class="card-title">⑤ マイナビ掲載状況を検索</div>
+        <div class="card-desc">マイナビ27/26/25 それぞれの掲載有無を確認。27はURLも取得</div>
       </div>
     </div>
-    <div class="flow-right">
-      <div class="memo-box">
-        <div class="memo-label">MEMO</div>
-        <textarea class="memo-input" placeholder="メモを入力..."></textarea>
-      </div>
-    </div>
-  </div>
 
-  <div class="flow-row">
-    <div class="flow-left">
-      <div class="timeline">
-        <div class="step" data-cat="ai">
-          <div class="dot"></div>
-          <div class="card">
-            <span class="badge badge-ai">SalesNow カスタムAIエージェント</span>
-            <div class="card-title">⑦ トークスクリプトを自動生成</div>
-            <div class="card-desc">活動履歴・企業情報・採用状況・dodaキャンパスのサービス概要を入力し、掘り起こし用のトークスクリプトを生成</div>
+    <div class="step" data-cat="web" style="margin-top:20px;">
+      <div class="dot"></div>
+      <div class="card">
+        <span class="badge badge-web">Web取得 + AI解析</span>
+        <div class="card-title">⑥ マイナビ27ページから詳細を取得</div>
+        <div class="card-desc">
+          マイナビ27 URLの有無で分岐
+          <div class="branch">
+            <div class="branch-label">&#9654; URLあり</div>
+            <div class="card-desc">ページHTMLを取得 → SalesNow カスタムAIエージェントで解析<br>→ 説明会日程・採用予定人数・過去3年採用実績・募集職種・<strong>勤務地</strong></div>
+          </div>
+          <div class="branch" style="margin-top:6px;">
+            <div class="branch-label">&#9654; URLなし</div>
+            <div class="card-desc">スキップ（マイナビ情報なしとして続行）</div>
           </div>
         </div>
+        <div class="card-note">※ bot経由でのページ取得が可能か、ブラウザ操作が必要か検証中</div>
       </div>
     </div>
-    <div class="flow-right">
-      <div class="memo-box">
-        <div class="memo-label">MEMO</div>
-        <textarea class="memo-input" placeholder="メモを入力..."></textarea>
-      </div>
-    </div>
-  </div>
 
-  <div class="flow-row">
-    <div class="flow-left">
-      <div class="timeline">
-        <div class="step" data-cat="sf">
-          <div class="dot"></div>
-          <div class="card">
-            <span class="badge badge-sf">Salesforce</span>
-            <div class="card-title">⑧ 主担当の取引先責任者を特定</div>
-            <div class="card-desc">主担当フラグあり → その担当者 / フラグなし → 最古の担当者</div>
-          </div>
-        </div>
+    <div class="step" data-cat="ai" style="margin-top:20px;">
+      <div class="dot"></div>
+      <div class="card">
+        <span class="badge badge-ai">SalesNow カスタムAIエージェント</span>
+        <div class="card-title">⑦ トークスクリプトを自動生成</div>
+        <div class="card-desc">活動履歴・企業情報・採用状況・dodaキャンパスのサービス概要を入力し、掘り起こし用のトークスクリプトを生成</div>
+        <div class="card-note">※ 事実情報の定義・アウトプット形式は三村さんよりSlackにて共有予定</div>
       </div>
     </div>
-    <div class="flow-right">
-      <div class="memo-box">
-        <div class="memo-label">MEMO</div>
-        <textarea class="memo-input" placeholder="メモを入力..."></textarea>
-      </div>
-    </div>
-  </div>
 
-  <div class="flow-row">
-    <div class="flow-left">
-      <div class="timeline">
-        <div class="step" data-cat="output">
-          <div class="dot"></div>
-          <div class="card">
-            <span class="badge badge-output">アウトプット</span>
-            <div class="card-title">⑨ SalesforceにToDoを作成</div>
-            <div class="card-desc">件名「dodaキャンパス訴求 - ○○株式会社」でToDo登録。<br>コメント欄にトークスクリプト本文を記載し、担当者に紐付け</div>
-          </div>
-        </div>
+    <div class="step" data-cat="sf" style="margin-top:20px;">
+      <div class="dot"></div>
+      <div class="card">
+        <span class="badge badge-sf">Salesforce</span>
+        <div class="card-title">⑧ 主担当の取引先責任者を特定</div>
+        <div class="card-desc">主担当フラグあり → その担当者 / フラグなし → 最古の担当者</div>
       </div>
     </div>
-    <div class="flow-right">
-      <div class="memo-box">
-        <div class="memo-label">MEMO</div>
-        <textarea class="memo-input" placeholder="メモを入力..."></textarea>
+
+    <div class="step" data-cat="output" style="margin-top:20px;">
+      <div class="dot"></div>
+      <div class="card">
+        <span class="badge badge-output">アウトプット</span>
+        <div class="card-title">⑨ SalesforceにToDoを作成</div>
+        <div class="card-desc">件名「dodaキャンパス訴求 - ○○株式会社」でToDo登録。<br>コメント欄にトークスクリプト本文を記載し、担当者に紐付け</div>
+        <div class="card-note">※ TODO設定内容（件名・期日・担当者の紐付け方式）は調整中</div>
       </div>
     </div>
+
   </div>
 
   <div class="legend">
@@ -462,52 +341,5 @@
   </div>
 
 </div>
-<script>
-// ---- メモの保存・読み込み（localStorage） ----
-const STORAGE_KEY = 'doda_workflow_memos';
-
-function saveMemos() {
-  const textareas = document.querySelectorAll('.memo-input');
-  const data = Array.from(textareas).map(ta => ta.value);
-  localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
-
-  // 保存日時を表示
-  const now = new Date();
-  const ts = `${now.getMonth()+1}/${now.getDate()} ${String(now.getHours()).padStart(2,'0')}:${String(now.getMinutes()).padStart(2,'0')}`;
-  document.getElementById('saveStatus').textContent = `最終保存: ${ts}`;
-
-  // トースト通知
-  showToast('メモを保存しました');
-}
-
-function loadMemos() {
-  const raw = localStorage.getItem(STORAGE_KEY);
-  if (!raw) return;
-  try {
-    const data = JSON.parse(raw);
-    const textareas = document.querySelectorAll('.memo-input');
-    data.forEach((val, i) => { if (textareas[i]) textareas[i].value = val; });
-    document.getElementById('saveStatus').textContent = '保存済みメモを読み込みました';
-  } catch(e) {}
-}
-
-function showToast(msg) {
-  const t = document.getElementById('toast');
-  t.textContent = msg;
-  t.classList.add('show');
-  setTimeout(() => t.classList.remove('show'), 2000);
-}
-
-// Ctrl+S / Cmd+S で保存
-document.addEventListener('keydown', e => {
-  if ((e.ctrlKey || e.metaKey) && e.key === 's') {
-    e.preventDefault();
-    saveMemos();
-  }
-});
-
-// ページ読み込み時に復元
-window.addEventListener('DOMContentLoaded', loadMemos);
-</script>
 </body>
 </html>
